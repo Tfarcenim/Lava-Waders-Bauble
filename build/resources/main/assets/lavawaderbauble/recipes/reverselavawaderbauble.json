@@ -1,0 +1,10 @@
+{"type": "minecraft:crafting_shapeless",
+"ingredients": [
+{
+"item": "lavawaderbauble:lavawaderbauble"
+}
+],
+"result": {
+"item": "randomthings:lavawader"
+}
+}

@@ -1,0 +1,16 @@
+[
+{
+  "modid": "lavawaderbauble",
+  "name": "Lava Wader Bauble",
+  "description": "Adds the lava waders as a bauble.",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["Tfarcenim"],
+  "credits": "",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]
