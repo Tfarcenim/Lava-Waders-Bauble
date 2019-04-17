@@ -15,6 +15,9 @@ public class LavaWaderBauble
     public static final String NAME = "Lava Wader Bauble";
     public static final String VERSION = "@VERSION@";
 
+    @Mod.Instance(MODID)
+    public static LavaWaderBauble instance;
+
     private static Logger logger;
     @SidedProxy(clientSide = "com.tfar."+MODID+".ClientProxy", serverSide = "com.tfar."+MODID+".CommonProxy")
     public static CommonProxy proxy;
@@ -24,7 +27,7 @@ public class LavaWaderBauble
     public void preInit(FMLPreInitializationEvent event)
     {
         logger = event.getModLog();
-        ModItem.load();
+        ModItems.load();
         proxy.registerModels();
         MinecraftForge.EVENT_BUS.register(new LavaWaderBaubleEventHandler());
     }

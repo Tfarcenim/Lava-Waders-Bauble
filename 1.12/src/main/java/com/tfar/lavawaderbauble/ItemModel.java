@@ -6,7 +6,9 @@ import net.minecraftforge.client.model.ModelLoader;
 
 public class ItemModel {
   public static void register() {
-    registerItem(ModItem.lavaWaderBauble);
+    registerItem(ModItems.lavaWaderBauble);
+    registerItem(ModItems.waterWalkingBootsBauble);
+    registerItem(ModItems.obsidianWaterWalkingBootsBauble);
   }
   private static void registerItem(Item i)
   {

@@ -11,7 +11,7 @@ apply plugin: 'net.minecraftforge.gradle.forge'
 //Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
 
 
-version = "1.0"
+version = "1.1"
 group = "com.tfar.lavawaderbauble" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "lavawaderbauble"
 
@@ -54,7 +54,7 @@ dependencies {
     // except that these dependencies get remapped to your current MCP mappings
     //deobfCompile 'com.mod-buildcraft:buildcraft:6.0.8:dev'
     //deobfProvided 'com.mod-buildcraft:buildcraft:6.0.8:dev'
-    deobfProvided "randomthings:RandomThings:MC${mc_version}:4.2.7"
+   // deobfProvid3ed "randomthings:RandomThings:MC${mc_version}:4.2.7"
     // for more info...
     // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
     // http://www.gradle.org/docs/current/userguide/dependency_management.html
