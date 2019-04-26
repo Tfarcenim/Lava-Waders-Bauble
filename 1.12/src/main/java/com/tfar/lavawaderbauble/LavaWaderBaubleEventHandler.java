@@ -1,6 +1,5 @@
 package com.tfar.lavawaderbauble;
 
-import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -21,6 +20,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.client.GuiIngameForge;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import net.minecraftforge.event.AnvilUpdateEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.world.GetCollisionBoxesEvent;
@@ -40,7 +40,7 @@ public class LavaWaderBaubleEventHandler {
   @SubscribeEvent
   @SideOnly(Side.CLIENT)
   public void renderGameOverlay(RenderGameOverlayEvent event) {
-    if (event.getType() != null && event instanceof RenderGameOverlayEvent.Post && event.getType() == RenderGameOverlayEvent.ElementType.ARMOR)
+    if (event.getType() != null && event instanceof RenderGameOverlayEvent.Post && event.getType() == RenderGameOverlayEvent.ElementType.ALL)
       renderLavaCharm(event);
   }
 
@@ -60,15 +60,16 @@ public class LavaWaderBaubleEventHandler {
       if (compound != null) {
         float charge = compound.getInteger("charge");
         Minecraft mc = Minecraft.getMinecraft();
-        mc.renderEngine.bindTexture(new ResourceLocation("randomthings:textures/gui/lavaCharmBar.png"));
+        mc.renderEngine.bindTexture(new ResourceLocation("lavawaderbauble:textures/gui/lavaCharmBar.png"));
         GuiIngame ingameGui = mc.ingameGUI;
 
         int width = event.getResolution().getScaledWidth();
         int height = event.getResolution().getScaledHeight();
 
-        int count = (int) Math.floor(charge / 2F / 10F);
+        int count = (int) Math.floor(charge / 20F);
 
         int left = 0;
+        if(player.getTotalArmorValue()>0)GuiIngameForge.left_height += 10;
 
         int top = height - GuiIngameForge.left_height - 1;
         GuiIngameForge.left_height += 10;
@@ -76,7 +77,7 @@ public class LavaWaderBaubleEventHandler {
         GlStateManager.enableBlend();
         for (int i = 0; i < count + 1; i++) {
           if (i == count + 1 - 1) {
-            float countFloat = charge / 2F / 10F + 10f;
+            float countFloat = charge / 20F + 10;
             GlStateManager.color(1, 1, 1, (countFloat) % ((int) (countFloat)));
           }
 
@@ -148,8 +149,8 @@ public class LavaWaderBaubleEventHandler {
     if (boots.isEmpty()) return;
     BlockPos liquid = new BlockPos(Math.floor(player.posX), Math.floor(player.posY), Math.floor(player.posZ));
     BlockPos air = new BlockPos((int) player.posX, (int) (player.posY + player.height), (int) player.posZ);
-    Block liquidBlock = player.world.getBlockState(liquid).getBlock();
-    Material liquidMaterial = liquidBlock.getMaterial(player.world.getBlockState(liquid));
+    IBlockState liquidBlockState = player.world.getBlockState(liquid);
+    Material liquidMaterial = liquidBlockState.getMaterial();
 
     if ((liquidMaterial == Material.WATER || (boots.getItem() == lavaWaderBauble && liquidMaterial.isLiquid()) && player.world.getBlockState(air).getBlock().isAir(player.world.getBlockState(air), player.world, air))
             && Utils.isJumping(player)) {
@@ -185,8 +186,9 @@ public class LavaWaderBaubleEventHandler {
             bb.maxZ
     );
     if (player.world.isMaterialInBB(feet, Material.WATER) &&
-            !player.world.isMaterialInBB(ankles, Material.WATER)
-    ) {
+            !(player.world.isMaterialInBB(ankles, Material.WATER) || (player.world.isMaterialInBB(ankles, Material.LAVA))
+    && !(player.world.isMaterialInBB(ankles, Material.LAVA)
+    ))) {
       player.motionY += 0.05F;
     }
   }
@@ -194,7 +196,7 @@ public class LavaWaderBaubleEventHandler {
   @SubscribeEvent
   public void getCollisions(@Nonnull GetCollisionBoxesEvent event) {
     Entity entity = event.getEntity();
-    if (entity == null || entity.isInWater() || entity.isSneaking() || !(entity instanceof EntityPlayer)) return;
+    if (!(entity instanceof EntityPlayer) || entity.isInWater() || entity.world.isMaterialInBB(entity.getEntityBoundingBox(), Material.LAVA) || entity.isSneaking()) return;
 
     EntityPlayer player = (EntityPlayer) entity;
 
@@ -215,7 +217,7 @@ public class LavaWaderBaubleEventHandler {
     )) {
       IBlockState state = world.getBlockState(mutableBlockPos);
 
-      if (state.getMaterial() == Material.WATER || state.getMaterial().isLiquid() && (boots.getItem() == lavaWaderBauble)) {
+      if (state.getMaterial() == Material.WATER || state.getMaterial().isLiquid() && boots.getItem() == lavaWaderBauble) {
         AxisAlignedBB bb = new AxisAlignedBB(
                 mutableBlockPos.getX(),
                 mutableBlockPos.getY(),
@@ -227,6 +229,18 @@ public class LavaWaderBaubleEventHandler {
           event.getCollisionBoxesList().add(bb);
         }
       }
+    }
+  }
+
+  @SubscribeEvent
+  public void anvilUpdate(AnvilUpdateEvent event){
+    if (event.getLeft().isEmpty() || event.getRight().isEmpty()) return;
+    AnvilRecipe recipe = AnvilRecipeHandler.getRecipe(event.getLeft(), event.getRight());
+
+    if (recipe != null)
+    {
+      event.setOutput(recipe.getOutput());
+      event.setCost(recipe.getCost());
     }
   }
 }
