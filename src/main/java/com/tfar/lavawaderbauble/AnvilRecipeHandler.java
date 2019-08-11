@@ -1,15 +1,15 @@
 package com.tfar.lavawaderbauble;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import net.minecraft.item.ItemStack;
+
+import java.util.HashSet;
+import java.util.Set;
 
 public class AnvilRecipeHandler
 {
-  static List<AnvilRecipe> anvilRecipes = new ArrayList<>();
+  static Set<AnvilRecipe> anvilRecipes = new HashSet<>();
 
-  public static List<AnvilRecipe> getAllRecipes()
+  public static Set<AnvilRecipe> getAllRecipes()
   {
     return anvilRecipes;
   }

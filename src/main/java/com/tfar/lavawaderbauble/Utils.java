@@ -16,11 +16,7 @@ import static com.tfar.lavawaderbauble.ModItems.*;
 
 public class Utils {
 
-  static Field isJumping;
-
-  static {
-    isJumping = ObfuscationReflectionHelper.findField(EntityLivingBase.class, "field_70703_bu");
-  }
+  static Field isJumping = ObfuscationReflectionHelper.findField(EntityLivingBase.class, "field_70703_bu");
 
   public static ItemStack getBauble(Item item, EntityPlayer player) {
     IBaublesItemHandler handler = BaublesApi.getBaublesHandler(player);

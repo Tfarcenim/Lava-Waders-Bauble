@@ -1,8 +1,10 @@
 package com.tfar.lavawaderbauble;
 
+import net.minecraft.item.ItemStack;
 import org.apache.commons.lang3.tuple.Pair;
 
-import net.minecraft.item.ItemStack;
+import java.util.Set;
+import java.util.function.Predicate;
 
 public class AnvilRecipe
 {
@@ -35,5 +37,14 @@ public class AnvilRecipe
   public int getCost()
   {
     return cost;
+  }
+
+  public static boolean matches(ItemStack stack){
+
+    Set<AnvilRecipe> recipes = AnvilRecipeHandler.getAllRecipes();
+
+    Predicate<AnvilRecipe> p = s -> ItemStack.areItemsEqual(s.input,stack);
+
+    return recipes.stream().anyMatch(p);
   }
 }
