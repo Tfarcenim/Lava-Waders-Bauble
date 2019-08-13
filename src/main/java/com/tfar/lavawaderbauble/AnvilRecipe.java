@@ -39,12 +39,4 @@ public class AnvilRecipe
     return cost;
   }
 
-  public static boolean matches(ItemStack stack){
-
-    Set<AnvilRecipe> recipes = AnvilRecipeHandler.getAllRecipes();
-
-    Predicate<AnvilRecipe> p = s -> ItemStack.areItemsEqual(s.input,stack);
-
-    return recipes.stream().anyMatch(p);
-  }
 }

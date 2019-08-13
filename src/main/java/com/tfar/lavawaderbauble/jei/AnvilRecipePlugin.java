@@ -1,6 +1,6 @@
 package com.tfar.lavawaderbauble.jei;
 
-import com.google.common.collect.Lists;
+/*import com.google.common.collect.Lists;
 import com.tfar.lavawaderbauble.AnvilRecipe;
 import com.tfar.lavawaderbauble.AnvilRecipeHandler;
 import mezz.jei.api.*;
@@ -31,4 +31,4 @@ public class AnvilRecipePlugin implements IModPlugin
 		//DescriptionHandler.addDescriptions(registry);
 	}
 
-}
+}*/

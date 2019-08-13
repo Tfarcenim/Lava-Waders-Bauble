@@ -1,26 +1,26 @@
 package com.tfar.lavawaderbauble;
 
-import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.common.registry.ForgeRegistries;
+import net.minecraftforge.registries.ObjectHolder;
 
-import static com.tfar.lavawaderbauble.AnvilRecipeHandler.*;
-import static com.tfar.lavawaderbauble.ModItems.*;
+import static com.tfar.lavawaderbauble.AnvilRecipeHandler.addAnvilRecipe;
+import static com.tfar.lavawaderbauble.ModRecipes.RTItems.*;
 
 public class ModRecipes {
 
   private static final String RT_MOD_ID = "randomthings";
 
-  private static Item obsidianSkullRing = ForgeRegistries.ITEMS.getValue(new ResourceLocation(RT_MOD_ID,"obsidianskullring"));
-  private static Item obsidianSkull = ForgeRegistries.ITEMS.getValue(new ResourceLocation(RT_MOD_ID,"obsidianskull"));
-  private static Item lavaCharm = ForgeRegistries.ITEMS.getValue(new ResourceLocation(RT_MOD_ID,"lavacharm"));
+  @ObjectHolder(RT_MOD_ID)
+  static class RTItems {
+    static final Item obsidianskullring = null;
+    static final Item obsidianskull = null;
+    static final Item lavacharm = null;
+  }
 
-
-  public static void register() {
-    addAnvilRecipe(new ItemStack(waterWalkingBootsBauble), new ItemStack(obsidianSkull), new ItemStack(obsidianWaterWalkingBootsBauble), 10);
-    addAnvilRecipe(new ItemStack(waterWalkingBootsBauble), new ItemStack(obsidianSkullRing), new ItemStack(obsidianWaterWalkingBootsBauble), 10);
-    addAnvilRecipe(new ItemStack(obsidianWaterWalkingBootsBauble), new ItemStack(lavaCharm), new ItemStack(lavaWaderBauble), 15);
+  public static void registerCompat() {
+    addAnvilRecipe(new ItemStack(LavaWaderBauble.Objects.waterWalkingBootsBauble), new ItemStack(obsidianskull), new ItemStack(LavaWaderBauble.Objects.obsidianWaterWalkingBootsBauble), 10);
+    addAnvilRecipe(new ItemStack(LavaWaderBauble.Objects.waterWalkingBootsBauble), new ItemStack(obsidianskullring), new ItemStack(LavaWaderBauble.Objects.obsidianWaterWalkingBootsBauble), 10);
+    addAnvilRecipe(new ItemStack(LavaWaderBauble.Objects.obsidianWaterWalkingBootsBauble), new ItemStack(lavacharm), new ItemStack(LavaWaderBauble.Objects.lavaWaderBauble), 15);
   }
 }
