@@ -28,15 +28,13 @@ import javax.annotation.Nullable;
 import static com.tfar.lavawaderbauble.ModRecipes.registerCompat;
 
 @Mod(value = LavaWaderBauble.MODID)
-public class LavaWaderBauble
-{
+public class LavaWaderBauble {
   public static final String MODID = "lavawaderbauble";
 
   private static Logger logger;
 
   @SubscribeEvent
-  public void init(FMLCommonSetupEvent event)
-  {
+  public void init(FMLCommonSetupEvent event) {
     MinecraftForge.EVENT_BUS.register(new LavaWaderBaubleEventHandler());
     if (ModList.get().isLoaded("randomthings")) registerCompat();
   }
@@ -44,9 +42,9 @@ public class LavaWaderBauble
   @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
   public static class RegistryEvents {
     @SubscribeEvent
-    public static void registerItems(RegistryEvent.Register<Item> e){
+    public static void registerItems(RegistryEvent.Register<Item> e) {
       IForgeRegistry<Item> registry = e.getRegistry();
-      Item.Properties properties = new Item.Properties().group(ItemGroup.REDSTONE);
+      Item.Properties properties = new Item.Properties().group(ItemGroup.COMBAT);
       Item.Properties water = properties.rarity(Rarity.UNCOMMON);
       Item.Properties obsidian = properties.rarity(Rarity.RARE);
       Item.Properties lava = properties.rarity(Rarity.EPIC);
@@ -57,7 +55,7 @@ public class LavaWaderBauble
     }
 
     @SubscribeEvent
-    public static void communication(InterModEnqueueEvent e){
+    public static void communication(InterModEnqueueEvent e) {
       InterModComms.sendTo("curios", CuriosAPI.IMC.REGISTER_TYPE,
               () -> new CurioIMCMessage("charm"));
     }
@@ -73,7 +71,6 @@ public class LavaWaderBauble
 
         @Override
         public boolean canRightClickEquip() {
-
           return true;
         }
       };
@@ -93,6 +90,7 @@ public class LavaWaderBauble
     }
 
   }
+
   @ObjectHolder(MODID)
   public static class Objects {
 

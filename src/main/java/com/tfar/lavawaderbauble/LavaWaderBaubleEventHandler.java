@@ -1,47 +1,26 @@
 package com.tfar.lavawaderbauble;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.block.material.Material;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.player.ClientPlayerEntity;
-import net.minecraft.client.gui.AbstractGui;
-import net.minecraft.client.gui.IngameGui;
-import com.mojang.blaze3d.platform.GlStateManager;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.MoverType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.ForgeIngameGui;
-import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.event.AnvilUpdateEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
-import net.minecraftforge.event.entity.living.LivingEvent;
-import net.minecraftforge.event.world.GetCollisionBoxesEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.common.Mod;
 
-import javax.annotation.Nonnull;
-
-import static com.tfar.lavawaderbauble.LavaWaderBauble.Objects.*;
-import static com.tfar.lavawaderbauble.Utils.*;
-import static net.minecraft.util.math.MathHelper.ceil;
-import static net.minecraft.util.math.MathHelper.floor;
+import static com.tfar.lavawaderbauble.LavaWaderBauble.Objects.lavaWaderBauble;
+import static com.tfar.lavawaderbauble.LavaWaderBauble.Objects.waterWalkingBootsBauble;
+import static com.tfar.lavawaderbauble.Utils.getBauble;
+import static com.tfar.lavawaderbauble.Utils.getBaubles;
 
 @Mod.EventBusSubscriber
 public class LavaWaderBaubleEventHandler {
 
 @SubscribeEvent
   public static void handleLavaProtection(LivingAttackEvent event) {
+  if (!(event.getEntityLiving() instanceof PlayerEntity)|| !event.getSource().isFireDamage())return;
     ItemStack lavaProtector = ItemStack.EMPTY;
     ItemStack lavaCharm;
 
@@ -53,26 +32,22 @@ public class LavaWaderBaubleEventHandler {
     }
 
     if (!lavaProtector.isEmpty()) {
-      CompoundNBT compound = lavaProtector.getTag();
-      if (compound != null) {
+      CompoundNBT compound = lavaProtector.getOrCreateTag();
         int charge = compound.getInt("charge");
         if (charge > 0) {
-          compound.putInt("charge", charge - 1);
-          compound.putInt("chargeCooldown", 40);
-          event.setCanceled(true);
-        }
+          if (event.getSource() == DamageSource.LAVA) {
+            compound.putInt("charge", --charge);
+            compound.putInt("chargeCooldown", 40);
+          }
+          event.setCanceled(event.getSource() != DamageSource.LAVA || charge > 0);
       }
     }
   }
 
   @SubscribeEvent
-  public void livingAttacked(LivingAttackEvent event) {
+  public static void handleFireDamage(LivingAttackEvent event) {
     if (!event.getEntityLiving().world.isRemote) {
       if (!event.isCanceled() && event.getAmount() > 0 && event.getEntityLiving() instanceof ServerPlayerEntity) {
-
-        if (event.getSource() == DamageSource.LAVA) {
-          handleLavaProtection(event);
-        }
 
         if (event.getSource().isFireDamage() && event.getSource() != DamageSource.LAVA) {
           handleFireProtection(event);
@@ -81,15 +56,17 @@ public class LavaWaderBaubleEventHandler {
     }
   }
 
-  private void handleFireProtection(LivingAttackEvent event) {
+  private static void handleFireProtection(LivingAttackEvent event) {
     PlayerEntity player = (PlayerEntity) event.getEntityLiving();
     ItemStack bauble = getBaubles(player);
-    if (!bauble.isEmpty() && bauble.getItem() != waterWalkingBootsBauble) event.setCanceled(true);
+    if (!bauble.isEmpty() && bauble.getItem() != waterWalkingBootsBauble)
+      event.setCanceled(true);
   }
 
-
+  /*
   @SubscribeEvent
   public void livingUpdate(LivingEvent.LivingUpdateEvent event) throws IllegalAccessException {
+  if (true)return;
     if (!(event.getEntityLiving() instanceof PlayerEntity)) return;
     PlayerEntity player = (PlayerEntity) event.getEntityLiving();
     if (player.isSneaking()) return;
@@ -108,8 +85,10 @@ public class LavaWaderBaubleEventHandler {
     }
   }
 
+  /*
   @SubscribeEvent
   public static void waterWalking(LivingEvent.LivingUpdateEvent event) {
+  if (true)return;
     Entity entity = event.getEntity();
     if (!(entity.getMotion().y > 0) || !(entity instanceof PlayerEntity)) return;
     PlayerEntity player = (PlayerEntity) entity;
@@ -142,11 +121,13 @@ public class LavaWaderBaubleEventHandler {
       player.setMotion(player.getMotion().x,player.getMotion().y + .5,player.getMotion().z);
     }
   }
-
+/*
   @SubscribeEvent
   public static void getCollisions(@Nonnull GetCollisionBoxesEvent event) {
     Entity entity = event.getEntity();
-    if (!(entity instanceof PlayerEntity) || entity.isInWater() || entity.world.isMaterialInBB(entity.getBoundingBox(), Material.LAVA) || entity.isSneaking()) return;
+    if (!(entity instanceof PlayerEntity)
+            || entity.isInWater()
+            || entity.world.isMaterialInBB(entity.getBoundingBox(), Material.LAVA) || entity.isSneaking()) return;
 
     PlayerEntity player = (PlayerEntity) entity;
 
@@ -177,10 +158,10 @@ public class LavaWaderBaubleEventHandler {
         if (event.getAabb().intersects(bb)) event.getCollisionBoxesList().add(bb);
       }
     }
-  }
+  }*/
 
   @SubscribeEvent
-  public void anvilUpdate(AnvilUpdateEvent event){
+  public static void anvilUpdate(AnvilUpdateEvent event){
     if (event.getLeft().isEmpty() || event.getRight().isEmpty()) return;
     AnvilRecipe recipe = AnvilRecipeHandler.getRecipe(event.getLeft(), event.getRight());
 

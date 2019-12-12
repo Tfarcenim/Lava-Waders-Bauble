@@ -14,36 +14,24 @@ public class ItemLavaWaderBauble extends Item {
   }
 
   @Override
-  public Rarity getRarity(ItemStack stack)
-  {
+  public Rarity getRarity(ItemStack stack) {
     return Rarity.EPIC;
   }
 
   @Override
   public void inventoryTick(ItemStack stack, World worldIn, Entity entityIn, int itemSlot, boolean isSelected) {
-    if (entityIn instanceof PlayerEntity)
-    {
+    if (entityIn instanceof PlayerEntity) {
       PlayerEntity player = (PlayerEntity) entityIn;
-      if (!player.world.isRemote)
-      {
-        if (stack.getTag() == null)
-        {
-          stack.setTag(new CompoundNBT());
-        }
-
-        CompoundNBT compound = stack.getTag();
+      if (!player.world.isRemote) {
+        CompoundNBT compound = stack.getOrCreateTag();
 
         int chargeCooldown = compound.getInt("chargeCooldown");
-        if (chargeCooldown > 0)
-        {
-          compound.putInt("chargeCooldown", chargeCooldown - 1);
-        }
-        else
-        {
+        if (chargeCooldown > 0) {
+          compound.putInt("chargeCooldown", --chargeCooldown);
+        } else {
           int charge = compound.getInt("charge");
-          if (charge < 200)
-          {
-            compound.putInt("charge", charge + 1);
+          if (charge < 200) {
+            compound.putInt("charge", ++charge);
           }
         }
       }
