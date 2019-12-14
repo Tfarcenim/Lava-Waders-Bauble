@@ -3,6 +3,7 @@ package com.tfar.lavawaderbauble;
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
+import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.gui.IngameGui;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
@@ -20,53 +21,42 @@ public class Client {
   private static final Minecraft mc = Minecraft.getInstance();
   private static final ResourceLocation ICON_LAVA = new ResourceLocation("lavawaderbauble:textures/gui/lavacharmbar.png");
 
-  @SubscribeEvent
-  public static void renderGameOverlay(RenderGameOverlayEvent event) {
-    if (event.getType() != null && event instanceof RenderGameOverlayEvent.Post && event.getType() == RenderGameOverlayEvent.ElementType.ALL)
-      renderLavaCharm(event);
-  }
+  @SubscribeEvent(receiveCanceled = true)
+  public static void renderGameOverlay(RenderGameOverlayEvent.Post event) {
+    if (event.getType() == RenderGameOverlayEvent.ElementType.ARMOR) {
+      ClientPlayerEntity player = mc.player;
+      ItemStack lavaProtector = getBauble(LavaWaderBauble.Objects.lavaWaderBauble, player);
 
-  private static void renderLavaCharm(RenderGameOverlayEvent event) {
-    ItemStack lavaProtector = ItemStack.EMPTY;
+      if (!lavaProtector.isEmpty()) {
+        CompoundNBT compound = lavaProtector.getTag();
+        if (compound != null) {
+          float charge = compound.getInt("charge");
+          mc.getRenderManager().textureManager.bindTexture(ICON_LAVA);
+          IngameGui ingameGui = mc.ingameGUI;
 
-    ClientPlayerEntity player = Minecraft.getInstance().player;
+          int width = mc.mainWindow.getScaledWidth();
+          int height = mc.mainWindow.getScaledHeight();
 
-    ItemStack lavaWaderBauble = getBauble(LavaWaderBauble.Objects.lavaWaderBauble, player);
+          int count = (int) Math.floor(charge / 20F);
 
-    if (!lavaWaderBauble.isEmpty())
-      lavaProtector = lavaWaderBauble;
+          int left = 0;
+          int top = height - ForgeIngameGui.left_height;
 
-    if (!lavaProtector.isEmpty()) {
-      CompoundNBT compound = lavaProtector.getTag();
-      if (compound != null) {
-        float charge = compound.getInt("charge");
-        mc.getRenderManager().textureManager.bindTexture(ICON_LAVA);
-        IngameGui ingameGui = mc.ingameGUI;
+          GlStateManager.enableBlend();
+          for (int i = 0; i < count + 1; i++) {
+            if (i == count) {
+              float countFloat = charge / 20F + 10;
+              GlStateManager.color4f(1, 1, 1, (countFloat) % ((int) (countFloat)));
+            }
 
-        int width = mc.mainWindow.getScaledWidth();
-        int height = mc.mainWindow.getScaledHeight();
-
-        int count = (int) Math.floor(charge / 20F);
-
-        int left = 0;
-        if(player.getTotalArmorValue()>0) ForgeIngameGui.left_height += 10;
-
-        int top = height - ForgeIngameGui.left_height - 1;
-        ForgeIngameGui.left_height += 10;
-
-        GlStateManager.enableBlend();
-        for (int i = 0; i < count + 1; i++) {
-          if (i == count + 1 - 1) {
-            float countFloat = charge / 20F + 10;
-            GlStateManager.color4f(1, 1, 1, (countFloat) % ((int) (countFloat)));
+            ingameGui.blit(width / 2 - 92 + left, top, 0, 0, 10, 10);
+            left += 8;
+            GlStateManager.color4f(1, 1, 1, 1);
           }
-
-          ingameGui.blit(width / 2 - 92 + left, top, 0, 0, 10, 10);
-          left += 8;
-          GlStateManager.color4f(1, 1, 1, 1);
+          ForgeIngameGui.left_height += 10;
+          mc.getTextureManager().bindTexture(AbstractGui.GUI_ICONS_LOCATION);
+          GlStateManager.disableBlend();
         }
-        //mc.renderEngine.bindTexture(AbstractGui.ICONS);
-        GlStateManager.disableBlend();
       }
     }
   }

@@ -14,6 +14,7 @@ import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.ObjectHolder;
 import org.apache.logging.log4j.Logger;
@@ -25,7 +26,6 @@ import top.theillusivec4.curios.api.imc.CurioIMCMessage;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import static com.tfar.lavawaderbauble.ModRecipes.registerCompat;
 
 @Mod(value = LavaWaderBauble.MODID)
 public class LavaWaderBauble {
@@ -33,10 +33,8 @@ public class LavaWaderBauble {
 
   private static Logger logger;
 
-  @SubscribeEvent
-  public void init(FMLCommonSetupEvent event) {
+  public LavaWaderBauble(){
     MinecraftForge.EVENT_BUS.register(new LavaWaderBaubleEventHandler());
-    if (ModList.get().isLoaded("randomthings")) registerCompat();
   }
 
   @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)

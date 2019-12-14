@@ -5,7 +5,6 @@ import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.DamageSource;
-import net.minecraftforge.event.AnvilUpdateEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -159,17 +158,5 @@ public class LavaWaderBaubleEventHandler {
       }
     }
   }*/
-
-  @SubscribeEvent
-  public static void anvilUpdate(AnvilUpdateEvent event){
-    if (event.getLeft().isEmpty() || event.getRight().isEmpty()) return;
-    AnvilRecipe recipe = AnvilRecipeHandler.getRecipe(event.getLeft(), event.getRight());
-
-    if (recipe != null)
-    {
-      event.setOutput(recipe.getOutput());
-      event.setCost(recipe.getCost());
-    }
-  }
 }
 

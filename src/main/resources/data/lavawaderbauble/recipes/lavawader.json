@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "lavawaderbauble",
+  "pattern": [
+    "coc",
+    "obo",
+    "coc"
+  ],
+  "key": {
+    "b": {
+      "item": "lavawaderbauble:obsidianwaterwalkingbootsbauble"
+    },
+    "o": {
+      "item": "minecraft:magma_block"
+    },
+    "c": {
+      "item": "minecraft:blaze_rod"
+    }
+  },
+  "result": {
+    "item": "lavawaderbauble:lavawaderbauble"
+  }
+}
