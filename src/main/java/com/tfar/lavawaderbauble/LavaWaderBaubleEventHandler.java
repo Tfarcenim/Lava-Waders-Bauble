@@ -1,11 +1,24 @@
 package com.tfar.lavawaderbauble;
 
+import com.tfar.additionalevents.event.GetCollisionVoxelShapesEvent;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.FlowingFluidBlock;
+import net.minecraft.block.material.Material;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.Pose;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.shapes.ISelectionContext;
+import net.minecraft.util.math.shapes.VoxelShape;
+import net.minecraft.util.math.shapes.VoxelShapes;
+import net.minecraft.world.IBlockReader;
+import net.minecraft.world.World;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
+import net.minecraftforge.event.world.GetCollisionBoxesEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
@@ -158,5 +171,27 @@ public class LavaWaderBaubleEventHandler {
       }
     }
   }*/
+
+  @SubscribeEvent
+  public static void waterWalk(GetCollisionVoxelShapesEvent e){
+    BlockState state = e.getState();
+    IBlockReader world = e.world;
+    BlockPos pos = e.getPos();
+    ISelectionContext context = e.getContext();
+    Entity entity = context.getEntity();
+    if (entity instanceof PlayerEntity && state.getBlock() instanceof FlowingFluidBlock && entity.getPose() != Pose.CROUCHING) {
+      PlayerEntity player = (PlayerEntity)entity;
+      boolean wet = player.isInWater() || player.isInLava();
+      boolean applyCollision = !wet;
+      applyCollision &= world.getBlockState(pos.up()).isAir(world,pos.up());
+      ItemStack boots = Utils.getBaubles(player);
+      applyCollision &= !boots.isEmpty()
+              && (state.getMaterial() == Material.WATER
+              || state.getMaterial() == Material.LAVA
+              && boots.getItem() ==
+              LavaWaderBauble.Objects.lavaWaderBauble);
+      if (applyCollision) e.setShape(VoxelShapes.fullCube());
+    }
+  }
 }
 

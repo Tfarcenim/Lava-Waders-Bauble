@@ -20,9 +20,10 @@ public class Utils {
     List<ItemStack> list = new ArrayList<>();
 
     CuriosAPI.getCuriosHandler(player)
-            .map(iCurioItemHandler -> iCurioItemHandler.getCurioMap().values()).ifPresent(curioStackHandlers -> curioStackHandlers
+            .map(iCurioItemHandler -> iCurioItemHandler.getCurioMap().values())
+            .ifPresent(curioStackHandlers -> curioStackHandlers
                     .forEach(curioStackHandler -> IntStream.range(0, curioStackHandler.getSlots())
-                            .filter(i -> curioStackHandler.getStackInSlot(i).isEmpty())
+                            .filter(i -> !curioStackHandler.getStackInSlot(i).isEmpty())
                             .forEach(i -> list.add(curioStackHandler.getStackInSlot(i)))));
     return list;
   }

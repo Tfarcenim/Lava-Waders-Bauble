@@ -1,6 +1,6 @@
 package com.tfar.lavawaderbauble;
 
-import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.gui.AbstractGui;
@@ -9,8 +9,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.ForgeIngameGui;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import net.minecraftforge.client.gui.ForgeIngameGui;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
@@ -34,28 +34,28 @@ public class Client {
           mc.getRenderManager().textureManager.bindTexture(ICON_LAVA);
           IngameGui ingameGui = mc.ingameGUI;
 
-          int width = mc.mainWindow.getScaledWidth();
-          int height = mc.mainWindow.getScaledHeight();
+          int width = mc.func_228018_at_().getScaledWidth();
+          int height = mc.func_228018_at_().getScaledHeight();
 
           int count = (int) Math.floor(charge / 20F);
 
           int left = 0;
           int top = height - ForgeIngameGui.left_height;
 
-          GlStateManager.enableBlend();
+          RenderSystem.enableBlend();
           for (int i = 0; i < count + 1; i++) {
             if (i == count) {
               float countFloat = charge / 20F + 10;
-              GlStateManager.color4f(1, 1, 1, (countFloat) % ((int) (countFloat)));
+              RenderSystem.color4f(1, 1, 1, (countFloat) % ((int) (countFloat)));
             }
 
             ingameGui.blit(width / 2 - 92 + left, top, 0, 0, 10, 10);
             left += 8;
-            GlStateManager.color4f(1, 1, 1, 1);
+            RenderSystem.color4f(1, 1, 1, 1);
           }
           ForgeIngameGui.left_height += 10;
           mc.getTextureManager().bindTexture(AbstractGui.GUI_ICONS_LOCATION);
-          GlStateManager.disableBlend();
+          RenderSystem.disableBlend();
         }
       }
     }
