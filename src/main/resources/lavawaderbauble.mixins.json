@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "package": "tfar.lavawaderbauble.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "refmap": "lavawaderbauble.refmap.json",
+  "mixins": [
+    "BlockStateMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "minVersion": "0.8"
+}

@@ -1,7 +1,6 @@
-package com.tfar.lavawaderbauble;
+package tfar.lavawaderbauble;
 
-import com.tfar.additionalevents.event.GetCollisionVoxelShapesEvent;
-import net.minecraft.block.BlockState;
+import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.FlowingFluidBlock;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
@@ -14,18 +13,11 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;
-import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.world.IBlockReader;
-import net.minecraft.world.World;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
-import net.minecraftforge.event.world.GetCollisionBoxesEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-
-import static com.tfar.lavawaderbauble.LavaWaderBauble.Objects.lavaWaderBauble;
-import static com.tfar.lavawaderbauble.LavaWaderBauble.Objects.waterWalkingBootsBauble;
-import static com.tfar.lavawaderbauble.Utils.getBauble;
-import static com.tfar.lavawaderbauble.Utils.getBaubles;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mod.EventBusSubscriber
 public class LavaWaderBaubleEventHandler {
@@ -36,8 +28,7 @@ public class LavaWaderBaubleEventHandler {
     ItemStack lavaProtector = ItemStack.EMPTY;
     ItemStack lavaCharm;
 
-    lavaCharm = getBauble(lavaWaderBauble, (PlayerEntity) event.getEntityLiving());
-
+    lavaCharm = Utils.getBauble(LavaWaderBauble.lavaWaderBauble, (PlayerEntity) event.getEntityLiving());
 
     if (!lavaCharm.isEmpty()) {
       lavaProtector = lavaCharm;
@@ -70,8 +61,8 @@ public class LavaWaderBaubleEventHandler {
 
   private static void handleFireProtection(LivingAttackEvent event) {
     PlayerEntity player = (PlayerEntity) event.getEntityLiving();
-    ItemStack bauble = getBaubles(player);
-    if (!bauble.isEmpty() && bauble.getItem() != waterWalkingBootsBauble)
+    ItemStack bauble = Utils.getBaubles(player);
+    if (!bauble.isEmpty() && bauble.getItem() != LavaWaderBauble.waterWalkingBootsBauble)
       event.setCanceled(true);
   }
 
@@ -172,12 +163,7 @@ public class LavaWaderBaubleEventHandler {
     }
   }*/
 
-  @SubscribeEvent
-  public static void waterWalk(GetCollisionVoxelShapesEvent e){
-    BlockState state = e.getState();
-    IBlockReader world = e.world;
-    BlockPos pos = e.getPos();
-    ISelectionContext context = e.getContext();
+  public static boolean waterWalk(AbstractBlock.AbstractBlockState state, IBlockReader world, BlockPos pos, ISelectionContext context, CallbackInfoReturnable<VoxelShape> cir){
     Entity entity = context.getEntity();
     if (entity instanceof PlayerEntity && state.getBlock() instanceof FlowingFluidBlock && entity.getPose() != Pose.CROUCHING) {
       PlayerEntity player = (PlayerEntity)entity;
@@ -188,10 +174,10 @@ public class LavaWaderBaubleEventHandler {
       applyCollision &= !boots.isEmpty()
               && (state.getMaterial() == Material.WATER
               || state.getMaterial() == Material.LAVA
-              && boots.getItem() ==
-              LavaWaderBauble.Objects.lavaWaderBauble);
-      if (applyCollision) e.setShape(VoxelShapes.fullCube());
+              && boots.getItem() == LavaWaderBauble.lavaWaderBauble);
+      return applyCollision;
     }
+    return false;
   }
 }
 
